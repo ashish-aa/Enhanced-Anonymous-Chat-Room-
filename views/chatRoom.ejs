@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%=pageTitle%></title>
+</head>
+
+<body>
+    <div>
+        <input type="text" id="msg" placeholder="Enter the message">
+        <button id="btn">Send</button>
+    </div>
+    <div id="allMsg">
+
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const sessionId = '<%=sessionId%>';
+        const btn = document.getElementById('btn');
+        const inpBox = document.getElementById('msg');
+        const allMsg = document.getElementById('allMsg');
+        
+    
+        btn.addEventListener('click', (e) => {
+            const message = inpBox.value;
+            console.log(message);
+            socket.emit('chat-message', message);
+            inpBox.value = ''; // Clear the input box after sending the message
+        });
+        socket.on('connect', () => {
+        socket.emit('join', sessionId);
+    });
+    
+        socket.on('message', msg => { // Listen for 'message' event
+            const p = document.createElement('p');
+            p.innerText = msg;
+            allMsg.appendChild(p);
+        });
+    </script>
+    
+    
+</body>
+</html>
